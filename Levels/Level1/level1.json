@@ -1,0 +1,43 @@
+﻿{
+	"name" : "Level1",
+	"waves" : [{
+		"name" : "Wave1",
+		"time" : 30, 
+		"enemies" : 
+			[{
+				"type" : "BaseEnemy",
+				"trajectory":[{"x":100,"y":-20},{"x":100,"y":-20},{"x":30,"y":-20},{"x":30,"y":-20}]
+			},
+			{
+				"type" : "BaseEnemy",
+				"trajectory":[{"x":180,"y":-10},{"x":180,"y":-10},{"x":30,"y":-10},{"x":30,"y":-10}]
+			},
+			{
+				"type" : "BaseEnemy",
+				"trajectory":[{"x":110,"y":0},{"x":110,"y":0},{"x":30,"y":0},{"x":30,"y":0}]
+			},
+			{
+				"type" : "BaseEnemy",
+				"trajectory":[{"x":130,"y":10},{"x":130,"y":10},{"x":30,"y":10},{"x":30,"y":10}]
+			},
+			{
+				"type" : "BaseEnemy",
+				"trajectory":[{"x":100,"y":20},{"x":100,"y":20},{"x":30,"y":20},{"x":30,"y":20}]
+			}],
+		"bonus":			
+			[{
+				"type" : "BulletTime",
+				"position":{"x":5,"y":0}
+			}]
+		},{
+		"name" : "Boss",
+		"time" : 30, 
+		"enemies" : 
+			[{
+				"type" : "Patrick",
+				"trajectory":[{"x":100,"y":0},{"x":100,"y":0},{"x":30,"y":0},{"x":30,"y":0}]
+			}],
+		"bonus":			
+			[]
+		}]
+}
