@@ -1,0 +1,10 @@
+﻿{
+  "name" : "Basic",
+  "velocity" : 10,
+  "live" : 30,
+  "fireCount": 100,
+  "hitBehavior": "MoinsUn",
+  "annimation":{
+    "destroy":[0,10,"next"]
+  }
+}
