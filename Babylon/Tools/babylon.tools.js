@@ -174,8 +174,10 @@
 
     BABYLON.Tools.LoadFile = function (url, callback, progressCallBack, database) {
         var noIndexedDB = function () {
-            var request = new XMLHttpRequest();
             var loadUrl = BABYLON.Tools.BaseUrl + url;
+            /**
+             * This does not work! XSS
+            var request = new XMLHttpRequest();
             request.open('GET', loadUrl, true);
 
             request.onprogress = progressCallBack;
@@ -185,12 +187,16 @@
                     if (request.status == 200) {
                         callback(request.responseText);
                     } else { // Failed
-                        throw new Error(request.status, "Unable to load " + loadUrl);
+                        //throw new Error(request.status, "Unable to load " + loadUrl);
+                        console.log(request.status, "Unable to load " + loadUrl, request);
                     }
                 }
             };
 
             request.send(null);
+            */
+            // oh no, no progress callback. whatevs..
+            $.get(loadUrl, callback);
         };
 
         var loadFromIndexedDB = function () {
