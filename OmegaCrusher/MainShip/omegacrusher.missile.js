@@ -33,7 +33,7 @@
         }
 
         Missile.prototype.collisionBehavior = function(entity, tag) {
-            if ((entity !== mainShip) && (entity.toString() != "BulletTime")) {
+            if (entity !== mainShip) {
                 this._live = 0;
                 if (this._live <= 0) {
                     this.isDestroyed = true;
@@ -43,10 +43,6 @@
         };
 
         Missile.prototype.onDispose = function () {
-            if (mainShip.bulletTimeOptions != null)
-            {
-                mainShip.reverseBulletTime();
-            }
         }
 
         return Missile;

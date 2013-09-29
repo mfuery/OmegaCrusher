@@ -5,9 +5,9 @@
         __extends(MainShip, basedClass);
 
         function MainShip(cloneable, gameWorld) {
-            this.initialPosition = new BABYLON.Vector3(-20, 10, -40);
-            this.initialScaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-            this.initialRotation = new BABYLON.Vector3(0, -Math.PI/2, Math.PI/2);
+            this.initialPosition = new BABYLON.Vector3(0, 10, 0);
+            this.initialScaling = new BABYLON.Vector3(0.02, 0.02, 0.02);
+            this.initialRotation = new BABYLON.Vector3(0, -Math.PI / 2, Math.PI / 2);
             this._deltaPosition = BABYLON.Vector3.Zero();
             this.deltaRotate = BABYLON.Vector3.Zero();
             // Calling based class constructor
@@ -19,11 +19,19 @@
             this.laserTick = 0;
             this.missileFrequency = 3;
             this.missileTick = 0;
+            var self = this;
+            var instantZ = 0;
+            console.log(this.initialRotation);
+//            setInterval(function() {
+//                instantZ += (.01 * Math.PI);
+//                if (instantZ > (2 * Math.PI)) {
+//                    instantZ
+//                }
+//                self.setRotation(new BABYLON.Vector3((-90 * Math.PI) / 180, 0, 1));
+//            }, 100);
         }
 
         //Bonus
-        MainShip.prototype.bulletTime = 0;
-        MainShip.prototype.bulletTimeOptions = null;
 
         //Wapons
         MainShip.prototype._missiles = [];
@@ -105,39 +113,11 @@
             this.laserTick++;
         }
 
-        MainShip.prototype.reverseBulletTime = function () {
-            this._gameWorld.camera.position = this.bulletTimeOptions.cameraSource;
-            this._gameWorld.camera.setTarget(this.bulletTimeOptions.cameraTargetSource);
-            this.bulletTimeOptions.sight.dispose();
-            this.bulletTimeOptions = null;
-
-            gameWorld.Keyboard.connectTo(mainShip);
-            gameWorld.Keyboard.reverseLeftRight = false;
-            gameWorld.Keyboard.setAxisForLR("X");
-        }
-
         MainShip.prototype.fire = function (fromTruch) {
             if ((this.missileTick > this.missileFrequency) || (fromTruch)) {
 
                 var missile = this._gameWorld.assetsManager.cloneLoadedEntity("Missile");
 
-                if (this.bulletTime > 0) {
-                    var sightForeground = new BABYLON.Layer("back0", "Scenes/SpaceDek/sight.png", this._gameWorld.scene, false);
-                    this.bulletTimeOptions = {
-                        cameraSource: new BABYLON.Vector3(this._gameWorld.camera.position.x, this._gameWorld.camera.position.y, this._gameWorld.camera.position.z),
-                        cameraDestination: new BABYLON.Vector3(this.getPosition().x - 5, this.getPosition().y - 2, this.getPosition().z),
-                        cameraTargetDestination: new BABYLON.Vector3(20, -5, 40),
-                        cameraTargetSource: new BABYLON.Vector3(0, 0, 0),
-                        sight: sightForeground,
-                        missile: missile,
-                        tick: 0
-                    };
-
-                    gameWorld.Keyboard.connectTo(missile);
-                    gameWorld.Keyboard.reverseLeftRight = true;
-                    gameWorld.Keyboard.setAxisForLR("Z");
-                    this.bulletTime--;
-                }
                 missile.setPosition(this.getPosition());
                 missile.setHasCollisions(true);
                 this._missiles.push(missile);
@@ -158,41 +138,29 @@
                 if (this.isPlayingAnimation) {
                     var deltaMove = BABYLON.Vector3.Zero();
                     var deltaRotate = BABYLON.Vector3.Zero();
+                    var zNormalRotation = (Math.PI / 2);
                     if (this.getPosition().z < 40) {
                         deltaMove.z = 0.75;
                     }
-//                    if (this.getRotation().z > 0) {
-//                        deltaRotate.z = -0.015;
-//                    }
+                    if (this.getRotation().z > zNormalRotation) {
+                        deltaRotate.z = -0.015;
+                    }
 
                     this.setPosition(this.getPosition().add(deltaMove));
                     this.setRotation(this.getRotation().add(deltaRotate));
 
-                    if (this.getPosition().z >= 40 && this.getRotation().z <= 0) {
+                    if (this.getPosition().z >= 40 && this.getRotation().z <= zNormalRotation) {
                         this.isPlayingAnimation = false;
                     }
-                }
-                else {
-                    if (this.bulletTimeOptions != null) {
-                        if (this.bulletTimeOptions.tick < 100) {
-                            this._gameWorld.camera.position = BABYLON.Vector3.CatmullRom(this.bulletTimeOptions.cameraSource, this.bulletTimeOptions.cameraSource, this.bulletTimeOptions.missile.getPosition(), this.bulletTimeOptions.missile.getPosition(), this.bulletTimeOptions.tick / 100);
-                            this._gameWorld.camera.setTarget(BABYLON.Vector3.CatmullRom(this.bulletTimeOptions.cameraTargetSource, this.bulletTimeOptions.cameraTargetSource, this.bulletTimeOptions.cameraTargetDestination, this.bulletTimeOptions.cameraTargetDestination, this.bulletTimeOptions.tick / 100));
-                            this.bulletTimeOptions.tick++;
-                        } else {
-                            this.bulletTimeOptions.missile.tick();
-                            this._gameWorld.camera.position = new BABYLON.Vector3(this.bulletTimeOptions.missile.getPosition().x - 2, this.bulletTimeOptions.missile.getPosition().y + 1, this.bulletTimeOptions.missile.getPosition().z);
-                        }
+                } else {
+                   //this.setRotation(this.getRotation().add(this.deltaRotate));
+                   // Adding inertia
+                   this.deltaRotate = this.deltaRotate.scale(0.9);
 
-                    } else {
-                       //this.setRotation(this.getRotation().add(this.deltaRotate));
-                       // Adding inertia
-                       this.deltaRotate = this.deltaRotate.scale(0.9);
-
-                        for (var i = 0; i < this._missiles.length; i++) {
-                            this._missiles[i].tick();
-                            if (this._missiles[i].isDestroyed) {
-                                this._missiles.splice(i, 1);
-                            }
+                    for (var i = 0; i < this._missiles.length; i++) {
+                        this._missiles[i].tick();
+                        if (this._missiles[i].isDestroyed) {
+                            this._missiles.splice(i, 1);
                         }
                     }
                 }
