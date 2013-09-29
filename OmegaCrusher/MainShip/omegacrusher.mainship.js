@@ -7,7 +7,7 @@
         function MainShip(cloneable, gameWorld) {
             this.initialPosition = new BABYLON.Vector3(-20, 10, -40);
             this.initialScaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-            this.initialRotation = new BABYLON.Vector3(0, 0, 0);
+            this.initialRotation = new BABYLON.Vector3(0, -Math.PI/2, Math.PI/2);
             this._deltaPosition = BABYLON.Vector3.Zero();
             this.deltaRotate = BABYLON.Vector3.Zero();
             // Calling based class constructor
@@ -161,9 +161,9 @@
                     if (this.getPosition().z < 40) {
                         deltaMove.z = 0.75;
                     }
-                    if (this.getRotation().z > 0) {
-                        deltaRotate.z = -0.015;
-                    }
+//                    if (this.getRotation().z > 0) {
+//                        deltaRotate.z = -0.015;
+//                    }
 
                     this.setPosition(this.getPosition().add(deltaMove));
                     this.setRotation(this.getRotation().add(deltaRotate));
